@@ -1,0 +1,12 @@
+// Custom Toon Shader Model
+
+
+float3 ToonStep(float featherRadius, float halfLambert, float threshold = 0.5f)
+{
+	return smoothstep(threshold - featherRadius, threshold + featherRadius, halfLambert);
+}
+
+half Fresnel(half1 a, half metallic, half3 N, half3 V)
+{
+	return .1f;
+}
