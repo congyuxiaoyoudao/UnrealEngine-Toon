@@ -75,7 +75,7 @@
  */
 
  /////////////////////////////////////////////////////////////////////////////////////////
-
+#pragma once
 static const float HALF_POS_INF = 65535.0f;
 #define WhiteStandard uint
 static const WhiteStandard WhiteStandard_D65 = 0;
