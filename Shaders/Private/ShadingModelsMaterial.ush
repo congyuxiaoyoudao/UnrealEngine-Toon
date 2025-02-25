@@ -201,4 +201,14 @@ void SetGBufferForShadingModel(
 	#endif
 	}
 #endif
+
+// Begin TopRP changes
+#if MATERIAL_SHADINGMODEL_TOON
+	else if (ShadingModel == SHADINGMODELID_TOON)
+	{
+		GBuffer.CustomData.rgb = EncodeSubsurfaceColor(SubsurfaceColor);
+		GBuffer.CustomData.a = GetMaterialCustomData0(MaterialParameters);
+	}
+#endif
+// End TopRP changes
 }

@@ -2822,6 +2822,14 @@ void FHLSLMaterialTranslator::GetMaterialEnvironment(EShaderPlatform InPlatform,
 			bMaterialRequestsDualSourceBlending = true;
 		}
 
+		// Begin TopRP changes
+		if (EnvironmentDefines->HasShadingModel(MSM_Toon))
+		{
+			OutEnvironment.SetDefine(TEXT("MATERIAL_SHADINGMODEL_TOON"), TEXT("1"));
+			bMaterialRequestsDualSourceBlending = true;
+		}
+		// End TopRP changes
+
 		if (EnvironmentDefines->bDisableForwardLocalLights)
 		{
 			OutEnvironment.SetDefine(TEXT("DISABLE_FORWARD_LOCAL_LIGHTS"), TEXT("1"));

@@ -414,6 +414,9 @@ FText FMaterialAttributeDefinitionMap::GetAttributeOverrideForMaterial(const FGu
 		CustomPinNames.Add({ MSM_Cloth, LOCTEXT("Cloth", "Cloth").ToString() });
 		CustomPinNames.Add({ MSM_Eye, LOCTEXT("IrisMask", "Iris Mask").ToString() });
 		CustomPinNames.Add({ MSM_SubsurfaceProfile, LOCTEXT("Curvature", "Curvature").ToString() });
+		// Begin TopRP changes
+		CustomPinNames.Add({ MSM_Toon, LOCTEXT("ToonCustom", "ToonCustom").ToString() });
+		// End TopRP changes
 		return FText::FromString(GetPinNameFromShadingModelField(Material->GetShadingModels(), CustomPinNames, LOCTEXT("CustomData0", "Custom Data 0").ToString()));
 	case MP_CustomData1:
 		CustomPinNames.Add({ MSM_ClearCoat, LOCTEXT("ClearCoatRoughness", "Clear Coat Roughness").ToString() });

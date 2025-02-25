@@ -304,7 +304,10 @@ bool IsSubsurfaceModel(int ShadingModel)
 		|| ShadingModel == SHADINGMODELID_SUBSURFACE_PROFILE
 		|| ShadingModel == SHADINGMODELID_TWOSIDED_FOLIAGE
 		|| ShadingModel == SHADINGMODELID_HAIR
-		|| ShadingModel == SHADINGMODELID_EYE;
+		|| ShadingModel == SHADINGMODELID_EYE
+		// Begin TopRP changes
+	    || ShadingModel == SHADINGMODELID_TOON;
+		// End TopRP changes
 }
 
 bool UseSubsurfaceProfile(int ShadingModel)
@@ -321,7 +324,10 @@ bool HasCustomGBufferData(int ShadingModelID)
 		|| ShadingModelID == SHADINGMODELID_TWOSIDED_FOLIAGE
 		|| ShadingModelID == SHADINGMODELID_HAIR
 		|| ShadingModelID == SHADINGMODELID_CLOTH
-		|| ShadingModelID == SHADINGMODELID_EYE;
+		|| ShadingModelID == SHADINGMODELID_EYE
+		// Begin TopRP changes
+	    || ShadingModelID == SHADINGMODELID_TOON;
+		// End TopRP changes;
 }
 
 bool HasAnisotropy(int SelectiveOutputMask)

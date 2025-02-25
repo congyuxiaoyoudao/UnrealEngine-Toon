@@ -267,6 +267,10 @@ namespace PixelInspector
 			return EMaterialShadingModel::MSM_ThinTranslucent;
 		case PIXEL_INSPECTOR_SHADINGMODELID_SUBSTRATE:
 			return EMaterialShadingModel::MSM_Strata;
+		// Begin TopRP changes
+		case PIXEL_INSPECTOR_SHADINGMODELID_TOON:
+			return EMaterialShadingModel::MSM_Toon;
+		// End Begin TopRP changes
 		};
 		return EMaterialShadingModel::MSM_DefaultLit;
 	}

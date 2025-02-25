@@ -347,20 +347,28 @@ FLightAccumulator AccumulateDynamicLighting(
 
 	LightAccumulator.EstimatedCost += 0.3f;		// running the PixelShader at all has a cost
 
+	// Begin TopRP changes
 	BRANCH
-	if( LightMask > 0 )
+	if (LightMask > 0)
 	{
 		FShadowTerms Shadow;
+		FShadowTerms ToonShadow;
 		Shadow.SurfaceShadow = AmbientOcclusion;
 		Shadow.TransmissionShadow = 1;
 		Shadow.TransmissionThickness = 1;
 		Shadow.HairTransmittance.OpaqueVisibility = 1;
 		const float ContactShadowOpacity = GBuffer.CustomData.a;
-		GetShadowTerms(GBuffer.Depth, GBuffer.PrecomputedShadowFactors, GBuffer.ShadingModelID, ContactShadowOpacity,
+		BRANCH
+		if (GBuffer.ShadingModelID == SHADINGMODELID_TOON)
+			GetShadowTerms(GBuffer.Depth, GBuffer.PrecomputedShadowFactors, GBuffer.ShadingModelID, ContactShadowOpacity,
+		LightData, TranslatedWorldPosition, L, LightAttenuation, Dither, ToonShadow);
+		else
+			GetShadowTerms(GBuffer.Depth, GBuffer.PrecomputedShadowFactors, GBuffer.ShadingModelID, ContactShadowOpacity,
 			LightData, TranslatedWorldPosition, L, LightAttenuation, Dither, Shadow);
 		SurfaceShadow = Shadow.SurfaceShadow;
 
-		LightAccumulator.EstimatedCost += 0.3f;		// add the cost of getting the shadow terms
+		LightAccumulator.EstimatedCost += 0.3f; // add the cost of getting the shadow terms
+		// End TopRP changes
 
 #if SHADING_PATH_MOBILE
 		const bool bNeedsSeparateSubsurfaceLightAccumulation = UseSubsurfaceProfile(GBuffer.ShadingModelID);
@@ -380,7 +388,13 @@ FLightAccumulator AccumulateDynamicLighting(
 		#if REFERENCE_QUALITY
 			Lighting = IntegrateBxDF( GBuffer, N, V, Rect, Shadow, SourceTexture, SVPos );
 		#else
-			Lighting = IntegrateBxDF( GBuffer, N, V, Rect, Shadow, SourceTexture);
+		// Begin TopRP changes
+		BRANCH
+		if (GBuffer.ShadingModelID == SHADINGMODELID_TOON)
+			Lighting = IntegrateBxDF( GBuffer, N, V, Rect, ToonShadow, SourceTexture );
+		else 
+			Lighting = IntegrateBxDF( GBuffer, N, V, Rect, Shadow, SourceTexture );
+		// End TopRP changes
 		#endif		
 		}
 		else

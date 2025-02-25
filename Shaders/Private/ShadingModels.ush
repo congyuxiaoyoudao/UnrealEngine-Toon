@@ -13,6 +13,9 @@
 #include "ShadingEnergyConservation.ush"
 #include "ParticipatingMediaCommon.ush"
 #include "ColorSpace.ush"
+// Begin TopRP changes
+#include "Toon/ToonShadingCommon.ush"
+// End TopRP changes
 
 #ifndef HAIR_BSDF_BACKLIT
 #define HAIR_BSDF_BACKLIT 1
@@ -970,6 +973,57 @@ FDirectLighting PreintegratedSkinBxDF( FGBufferData GBuffer, half3 N, half3 V, h
 	return Lighting;
 }
 
+FDirectLighting ToonBxDF(FGBufferData GBuffer, half3 N, half3 V, half3 L, float Falloff, float NoL, FAreaLight AreaLight, FShadowTerms Shadow)
+{
+
+	// Inverse Tonemap to get the right color
+	GBuffer.BaseColor = FilmToneMapInverse(GBuffer.BaseColor);
+
+	half3 X = GBuffer.WorldTangent;
+	half3 Y = normalize(cross(N, X));
+	BxDFContext Context;
+	Init(Context, N, X, Y, V, L);
+	SphereMaxNoH(Context, AreaLight.SphereSinAlpha, true);
+	float ShadowRange = GBuffer.Specular;
+	float ShadowOffset = (GBuffer.Roughness - 0.5) * 2;
+
+	float SpecularOffset = GBuffer.Specular;
+	float SpecularRange = saturate(GBuffer.Roughness - 0.5);
+	half rim = saturate(ceil(Fresnel(GBuffer.CustomData.a * 1000, GBuffer.Metallic, N, V))) * 2;
+
+	float3 SSSColor = ExtractSubsurfaceColor(GBuffer);
+	float3 ShadowColor = 0;
+	ShadowColor = GBuffer.BaseColor * SSSColor;
+	float ShadowArea = smoothstep(0.5 - ShadowRange, 0.51 + ShadowRange, saturate(Context.NoL + ShadowOffset));
+	float SoftScatterStrength = 0;
+
+	half3 H = normalize(V + L);
+	float NoH = saturate(dot(N, H));
+	Context.NoL = saturate(ceil(dot(N, L) * 2) / 2);
+	half NoLOffset = Context.NoL;
+
+// compute and composite Lighting
+	FDirectLighting Lighting;
+
+// 1. Diffuse
+//Lighting.Diffuse = AreaLight.FalloffColor * (Context.NoL + rim) * Falloff * Diffuse_Lambert(GBuffer.BaseColor) * 2.2;
+	Lighting.Diffuse = AreaLight.FalloffColor * (Context.NoL + rim) * Falloff * Diffuse_Lambert(lerp(ShadowColor, GBuffer.BaseColor, ShadowArea)) * 2.2;
+
+// 2. Specular
+	float InScatter = pow(saturate(dot(L, -V)), 12) * lerp(3, .1f, 1);
+	float NormalContribution = saturate(dot(N, H));
+	float BackScatter = GBuffer.GBufferAO * NormalContribution / (PI * 2);
+	Lighting.Specular = ToonStep(SpecularRange, (saturate(D_GGX(SpecularOffset, NoH))), 0.5f) * (AreaLight.FalloffColor * GBuffer.SpecularColor * Falloff * 8);
+
+// 3. Transmission
+	float3 TransmissionSoft = AreaLight.FalloffColor * (Falloff * lerp(BackScatter, 1, InScatter)) * ShadowColor * SoftScatterStrength;
+	float3 ShadowLightener = 0;
+	ShadowLightener = (saturate(smoothstep(0, 1, saturate(1 - NoLOffset))) * ShadowColor * 0.1);
+
+	Lighting.Transmission = (ShadowLightener + TransmissionSoft) * Falloff;
+	return Lighting;
+}
+
 FDirectLighting IntegrateBxDF( FGBufferData GBuffer, half3 N, half3 V, half3 L, float Falloff, half NoL, FAreaLight AreaLight, FShadowTerms Shadow )
 {
 	switch( GBuffer.ShadingModelID )
@@ -994,6 +1048,10 @@ FDirectLighting IntegrateBxDF( FGBufferData GBuffer, half3 N, half3 V, half3 L, 
 			return ClothBxDF( GBuffer, N, V, L, Falloff, NoL, AreaLight, Shadow );
 		case SHADINGMODELID_EYE:
 			return EyeBxDF( GBuffer, N, V, L, Falloff, NoL, AreaLight, Shadow );
+		// Begin TopRP changes
+		case SHADINGMODELID_TOON:
+			return ToonBxDF(GBuffer, N, V, L, Falloff, NoL, AreaLight, Shadow);
+		// End TopRP changes
 		default:
 			return (FDirectLighting)0;
 	}

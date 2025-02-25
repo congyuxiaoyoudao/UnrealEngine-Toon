@@ -132,6 +132,9 @@ void ApplyFetchEnvironmentInternal(FShaderMaterialPropertyDefines& SrcDefines, c
 	FETCH_COMPILE_BOOL(MATERIAL_SHADINGMODEL_EYE);
 	FETCH_COMPILE_BOOL(MATERIAL_SHADINGMODEL_SINGLELAYERWATER);
 	FETCH_COMPILE_BOOL(MATERIAL_SHADINGMODEL_THIN_TRANSLUCENT);
+	// Begin TopRP changes
+	FETCH_COMPILE_BOOL(MATERIAL_SHADINGMODEL_TOON);
+	// End TopRP changes
 
 	FETCH_COMPILE_BOOL(SINGLE_LAYER_WATER_SEPARATED_MAIN_LIGHT);
 
@@ -1890,6 +1893,14 @@ static void DetermineUsedMaterialSlots(
 		}
 	}
 
+	// Begin TopRP changes
+	if (Mat.MATERIAL_SHADINGMODEL_TOON)
+	{
+		SetStandardGBufferSlots(Slots, bWriteEmissive, bHasTangent, bHasVelocity, bWritesVelocity, bHasStaticLighting, bIsSubstrateMaterial);
+		Slots[GBS_CustomData] = GetGBufferSlotUsage(bUseCustomData);
+	}
+	// End TopRP changes
+	
 	// doesn't write to GBuffer
 	if (Mat.MATERIAL_SHADINGMODEL_THIN_TRANSLUCENT)
 	{
