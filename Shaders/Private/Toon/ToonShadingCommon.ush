@@ -1,12 +1,56 @@
 // Custom Toon Shader Model
-
+#include "../ACES.ush"
 
 float3 ToonStep(float featherRadius, float halfLambert, float threshold = 0.5f)
 {
 	return smoothstep(threshold - featherRadius, threshold + featherRadius, halfLambert);
 }
 
-half Fresnel(half1 a, half metallic, half3 N, half3 V)
+// use Schlick-Fresnel's approximate formula
+// F0 + (1-F0) (1-cosu)^5
+half Fresnel(half metallic, half NoV)
 {
-	return .1f;
+	half f0 = lerp(0.04, 1.0, metallic);
+	half cosTheta = saturate(NoV);
+	half fresnel = f0 + (1 - f0) * pow((1 - cosTheta), 5);
+	return fresnel;
+}
+
+half GetRimArea(half rimScale,half fresnel)
+{
+	half rimArea = floor(fresnel * rimScale);
+	rimArea = saturate(rimArea);
+	return rimArea;
+}
+
+half3 ToonToneMap(half3 ToneColor)
+{
+	const float3x3 sRGB_2_AP1 = mul(XYZ_2_AP1_MAT, mul(D65_2_D60_CAT, sRGB_2_XYZ_MAT));
+	const float3x3 AP1_2_sRGB = mul(XYZ_2_sRGB_MAT, mul(D60_2_D65_CAT, AP1_2_XYZ_MAT));
+	
+	// Use ACEScg primaries as working space
+	half3 WorkingColor = mul(sRGB_2_AP1, saturate(ToneColor));
+
+	WorkingColor = max(0, WorkingColor);
+	
+	// Post desaturate
+	WorkingColor = lerp(dot(WorkingColor, AP1_RGB2Y), WorkingColor, 1.0 / 0.93);
+
+	half3 ToeColor = 0.374816 * pow(0.9 / min(WorkingColor, 0.8) - 1, -0.588729);
+	half3 ShoulderColor = 0.227986 * pow(1.56 / (1.04 - WorkingColor) - 1, 1.02046);
+
+	half3 t = saturate((WorkingColor - 0.35) / (0.45 - 0.35));
+	t = (3 - 2 * t) * t * t;
+	half3 LinearColor = lerp(ToeColor, ShoulderColor, t);
+
+	// Pre desaturate
+	LinearColor = lerp(dot(LinearColor, AP1_RGB2Y), LinearColor, 1.0 / 0.96);
+
+#if WORKING_COLOR_SPACE_IS_SRGB
+	LinearColor = mul( AP1_2_sRGB, LinearColor );
+#else
+	LinearColor = mul(XYZ_TO_RGB_WORKING_COLOR_SPACE_MAT, mul(AP1_2_XYZ_MAT, LinearColor));
+#endif
+	// Returning positive working color space values
+	return max(0, LinearColor);
 }

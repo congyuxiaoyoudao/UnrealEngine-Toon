@@ -15,6 +15,7 @@
 #include "ColorSpace.ush"
 // Begin TopRP changes
 #include "Toon/ToonShadingCommon.ush"
+
 // End TopRP changes
 
 #ifndef HAIR_BSDF_BACKLIT
@@ -977,7 +978,7 @@ FDirectLighting ToonBxDF(FGBufferData GBuffer, half3 N, half3 V, half3 L, float 
 {
 
 	// Inverse Tonemap to get the right color
-	GBuffer.BaseColor = FilmToneMapInverse(GBuffer.BaseColor);
+	GBuffer.BaseColor = ToonToneMap(GBuffer.BaseColor);
 
 	half3 X = GBuffer.WorldTangent;
 	half3 Y = normalize(cross(N, X));
@@ -989,8 +990,10 @@ FDirectLighting ToonBxDF(FGBufferData GBuffer, half3 N, half3 V, half3 L, float 
 
 	float SpecularOffset = GBuffer.Specular;
 	float SpecularRange = saturate(GBuffer.Roughness - 0.5);
-	half rim = saturate(ceil(Fresnel(GBuffer.CustomData.a * 1000, GBuffer.Metallic, N, V))) * 2;
+	half fresnel = Fresnel(GBuffer.Metallic, Context.NoV);
+	half rim = GetRimArea(GBuffer.CustomData.a * 10,fresnel);
 
+	float3 LightColor = AreaLight.FalloffColor * Falloff;
 	float3 SSSColor = ExtractSubsurfaceColor(GBuffer);
 	float3 ShadowColor = 0;
 	ShadowColor = GBuffer.BaseColor * SSSColor;
@@ -1002,25 +1005,28 @@ FDirectLighting ToonBxDF(FGBufferData GBuffer, half3 N, half3 V, half3 L, float 
 	Context.NoL = saturate(ceil(dot(N, L) * 2) / 2);
 	half NoLOffset = Context.NoL;
 
-// compute and composite Lighting
+	// compute and composite Lighting
 	FDirectLighting Lighting;
+	Lighting.Diffuse = 0;
+	Lighting.Specular = 0;
+	Lighting.Transmission = 0;
+	
+	// 1. Diffuse
+	//Lighting.Diffuse = AreaLight.FalloffColor * (Context.NoL + rim) * Falloff * Diffuse_Lambert(GBuffer.BaseColor) * 2.2;
+	float3 DiffuseBase = Context.NoL * Diffuse_Lambert(lerp(ShadowColor, GBuffer.BaseColor, ShadowArea)) * 2.2;
+	Lighting.Diffuse = LightColor * (DiffuseBase + rim);
+	//// 2. Specular
+	//float InScatter = pow(saturate(dot(L, -V)), 12) * lerp(3, .1f, 1);
+	//float NormalContribution = saturate(dot(N, H));
+	//float BackScatter = GBuffer.GBufferAO * NormalContribution / (PI * 2);
+	//Lighting.Specular = ToonStep(SpecularRange, (saturate(D_GGX(SpecularOffset, NoH))), 0.5f) * (LightColor * GBuffer.SpecularColor * 8);
 
-// 1. Diffuse
-//Lighting.Diffuse = AreaLight.FalloffColor * (Context.NoL + rim) * Falloff * Diffuse_Lambert(GBuffer.BaseColor) * 2.2;
-	Lighting.Diffuse = AreaLight.FalloffColor * (Context.NoL + rim) * Falloff * Diffuse_Lambert(lerp(ShadowColor, GBuffer.BaseColor, ShadowArea)) * 2.2;
+	//// 3. Transmission
+	//float3 TransmissionSoft = LightColor * lerp(BackScatter, 1, InScatter) * ShadowColor * SoftScatterStrength;
+	//float3 ShadowLightener = 0;
+	//ShadowLightener = (saturate(smoothstep(0, 1, saturate(1 - NoLOffset))) * ShadowColor * 0.1);
 
-// 2. Specular
-	float InScatter = pow(saturate(dot(L, -V)), 12) * lerp(3, .1f, 1);
-	float NormalContribution = saturate(dot(N, H));
-	float BackScatter = GBuffer.GBufferAO * NormalContribution / (PI * 2);
-	Lighting.Specular = ToonStep(SpecularRange, (saturate(D_GGX(SpecularOffset, NoH))), 0.5f) * (AreaLight.FalloffColor * GBuffer.SpecularColor * Falloff * 8);
-
-// 3. Transmission
-	float3 TransmissionSoft = AreaLight.FalloffColor * (Falloff * lerp(BackScatter, 1, InScatter)) * ShadowColor * SoftScatterStrength;
-	float3 ShadowLightener = 0;
-	ShadowLightener = (saturate(smoothstep(0, 1, saturate(1 - NoLOffset))) * ShadowColor * 0.1);
-
-	Lighting.Transmission = (ShadowLightener + TransmissionSoft) * Falloff;
+	//Lighting.Transmission = (ShadowLightener + TransmissionSoft) * Falloff;
 	return Lighting;
 }
 
