@@ -1566,7 +1566,9 @@ void FMaterialInstanceParameterDetails::CreateBasePropertyOverrideWidgets(IDetai
 	CREATE_BASE_OVERRIDE_ROW_BASIC(DisplacementFadeRange);
 	CREATE_BASE_OVERRIDE_ROW_BASIC(MaxWorldPositionOffsetDisplacement);
 	CREATE_BASE_OVERRIDE_ROW_BOOL(CastDynamicShadowAsMasked, GetCastDynamicShadowAsMasked);
-
+	// Begin TopRP changes 17
+	CREATE_BASE_OVERRIDE_ROW_BOOL(RenderToonOutline, RenderToonOutline);
+	// End TopRP changes
 #undef CREATE_BASE_OVERRIDE_ROW_BASIC_BOOL
 #undef CREATE_BASE_OVERRIDE_ROW_BOOL
 #undef CREATE_BASE_OVERRIDE_ROW_BASIC
@@ -1652,7 +1654,9 @@ IMPLEMENT_OVERRIDE_MEMBER_FUNCS_BOOL(EnableDisplacementFade, false)
 IMPLEMENT_OVERRIDE_MEMBER_FUNCS(DisplacementFadeRange, false)
 IMPLEMENT_OVERRIDE_MEMBER_FUNCS(MaxWorldPositionOffsetDisplacement, false)
 IMPLEMENT_OVERRIDE_MEMBER_FUNCS(CastDynamicShadowAsMasked, true)
-
+// Begin TopRP changes 16
+IMPLEMENT_OVERRIDE_MEMBER_FUNCS(RenderToonOutline, true)
+// End TopRP changes
 #undef IMPLEMENT_OVERRIDE_MEMBER_FUNCS_BOOL
 #undef IMPLEMENT_OVERRIDE_MEMBER_FUNCS
 #undef IMPLEMENT_OVERRIDE_MEMBER_FUNCS_COMMON

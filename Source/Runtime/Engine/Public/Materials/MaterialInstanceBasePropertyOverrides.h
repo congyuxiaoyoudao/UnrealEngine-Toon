@@ -13,6 +13,11 @@ struct FMaterialInstanceBasePropertyOverrides
 {
 	GENERATED_USTRUCT_BODY()
 
+	// Begin TopRP changes 9. Enable override of Toon Outline
+	UPROPERTY(EditAnywhere, Category = Toon)
+	uint8 bOverride_RenderToonOutline : 1;
+	// End TopRP changes
+
 	/** Enables override of the opacity mask clip value. */
 	UPROPERTY(EditAnywhere, Category = Material)
 	uint8 bOverride_OpacityMaskClipValue : 1;
@@ -68,6 +73,11 @@ struct FMaterialInstanceBasePropertyOverrides
 	/** Enables override of the max world position offset property. */
 	UPROPERTY(EditAnywhere, Category = Material)
 	uint8 bOverride_MaxWorldPositionOffsetDisplacement : 1;
+
+	// Begin TopRP changes 10. Indicate the material should render outline
+	UPROPERTY(EditAnywhere, Category = Toon, meta = (editCondition = "bOverride_RenderToonOutline"))
+	uint8 bRenderToonOutline : 1;
+	// End TopRP changes
 
 	/** Indicates that the material should be rendered without backface culling and the normal should be flipped for backfaces. */
 	UPROPERTY(EditAnywhere, Category = Material, meta = (editcondition = "bOverride_TwoSided"))

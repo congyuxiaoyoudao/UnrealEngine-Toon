@@ -1923,6 +1923,9 @@ extern ENGINE_API bool CanConnectMaterialValueTypes(const uint32 InputType, cons
 class FMaterial
 {
 public:	
+	// Begin TopRP changes 6. Add virtual interface to FMaterial
+	ENGINE_API virtual bool RenderToonOutline() const { return false; }
+	// End TopRP changes
 #if UE_CHECK_FMATERIAL_LIFETIME
 	ENGINE_API uint32 AddRef() const;
 	ENGINE_API uint32 Release() const;
@@ -2857,6 +2860,9 @@ public:
 	ENGINE_API FMaterialResource();
 	ENGINE_API virtual ~FMaterialResource();
 
+	// Begin TopRP changes 7. Add function interface
+	ENGINE_API virtual bool RenderToonOutline() const override;
+	// End TopRP changes
 	void SetMaterial(UMaterial* InMaterial, UMaterialInstance* InInstance, ERHIFeatureLevel::Type InFeatureLevel, EMaterialQualityLevel::Type InQualityLevel = EMaterialQualityLevel::Num)
 	{
 		Material = InMaterial;

@@ -2330,6 +2330,10 @@ void UMaterialInstance::UpdateOverridableBaseProperties()
 		bEnableDisplacementFade = false;
 		DisplacementFadeRange = FDisplacementFadeRange();
 		MaxWorldPositionOffsetDisplacement = 0.0f;
+
+		// Begin TopRP changes 4. refresh variable
+		bRenderToonOutline = false;
+		// End TopRP changes
 		return;
 	}
 
@@ -2509,6 +2513,18 @@ void UMaterialInstance::UpdateOverridableBaseProperties()
 		MaxWorldPositionOffsetDisplacement = Parent->GetMaxWorldPositionOffsetDisplacement();
 		BasePropertyOverrides.MaxWorldPositionOffsetDisplacement = MaxWorldPositionOffsetDisplacement;
 	}
+
+	// Begin TopRP changes 13. Update override
+	if (BasePropertyOverrides.bOverride_RenderToonOutline)
+	{
+		bRenderToonOutline = BasePropertyOverrides.bOverride_RenderToonOutline;
+	}
+	else
+	{
+		bRenderToonOutline = Parent->RenderToonOutline();
+		BasePropertyOverrides.bOverride_RenderToonOutline = bRenderToonOutline;
+	}
+	// End TopRP changes
 }
 
 void UMaterialInstance::GetAllShaderMaps(TArray<FMaterialShaderMap*>& OutShaderMaps)
@@ -4757,7 +4773,9 @@ void UMaterialInstance::GetBasePropertyOverridesHash(FSHAHash& OutHash)const
 	GetPropertyOverrideHash(IsDisplacementFadeEnabled(), Mat->IsDisplacementFadeEnabled(), TEXT("bOverride_bEnableDisplacementFade"));
 	GetPropertyOverrideHash(GetDisplacementFadeRange(), Mat->GetDisplacementFadeRange(), TEXT("bOverride_DisplacementFadeRange"));
 	GetPropertyOverrideHash(GetMaxWorldPositionOffsetDisplacement(), Mat->GetMaxWorldPositionOffsetDisplacement(), TEXT("bOverride_MaxWorldPositionOffsetDisplacement"));
-	
+	// Begin TopRP changes 14. store new properties in hash table
+	GetPropertyOverrideHash(RenderToonOutline(), Mat->RenderToonOutline(), TEXT("bOverride_RenderToonOutline"));
+	// End TopRP changes
 	if (bHasOverrides)
 	{
 		Hash.Final();
@@ -4786,6 +4804,9 @@ bool UMaterialInstance::HasOverridenBaseProperties() const
 		GetDisplacementScaling() != Parent->GetDisplacementScaling() ||
 		IsDisplacementFadeEnabled() != Parent->IsDisplacementFadeEnabled() ||
 		GetDisplacementFadeRange() != Parent->GetDisplacementFadeRange() ||
+		// Begin TopRP changes 5. Add overide check
+		RenderToonOutline() != Parent->RenderToonOutline() ||
+		// End TopRP changes
 		!FMath::IsNearlyEqual(GetOpacityMaskClipValue(), Parent->GetOpacityMaskClipValue()) ||
 		!FMath::IsNearlyEqual(GetMaxWorldPositionOffsetDisplacement(), Parent->GetMaxWorldPositionOffsetDisplacement());
 }

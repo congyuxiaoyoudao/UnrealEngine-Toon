@@ -253,7 +253,9 @@ UCLASS(abstract, BlueprintType, MinimalAPI, HideCategories = (Thumbnail))
 class UMaterialInterface : public UObject, public IBlendableInterface, public IInterface_AssetUserData
 {
 	GENERATED_UCLASS_BODY()
-
+	// Begin TopRP changes 1. Add virtual interface
+	ENGINE_API virtual bool RenderToonOutline() const { return false; }
+	// End TopRP changes
 #if WITH_EDITORONLY_DATA
 protected:
 	friend class UMaterialInterfaceEditorOnlyData;

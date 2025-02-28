@@ -188,6 +188,13 @@ FMaterialResource::~FMaterialResource()
 {
 }
 
+// Begin TopRP changes 8. Inplement function interface
+bool FMaterialResource::RenderToonOutline() const
+{
+	return MaterialInstance ? MaterialInstance->bRenderToonOutline : Material ? Material->bRenderToonOutline : false;
+}
+// End TopRP changes
+
 int32 FMaterialResource::CompilePropertyAndSetMaterialProperty(EMaterialProperty Property, FMaterialCompiler* Compiler, EShaderFrequency OverrideShaderFrequency, bool bUsePreviousFrameTime) const
 {
 #if WITH_EDITOR

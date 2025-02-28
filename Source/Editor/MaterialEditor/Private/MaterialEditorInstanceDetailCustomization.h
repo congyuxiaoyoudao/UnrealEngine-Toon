@@ -135,7 +135,9 @@ private:
 	DECLARE_OVERRIDE_MEMBER_FUNCS(DisplacementFadeRange)
 	DECLARE_OVERRIDE_MEMBER_FUNCS(MaxWorldPositionOffsetDisplacement)
 	DECLARE_OVERRIDE_MEMBER_FUNCS(CastDynamicShadowAsMasked)
-	
+	// Begin TopRP changes 15
+	DECLARE_OVERRIDE_MEMBER_FUNCS(RenderToonOutline)
+	// End TopRP changes
 #undef DECLARE_OVERRIDE_MEMBER_FUNCS
 
 private:

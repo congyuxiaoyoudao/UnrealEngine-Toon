@@ -5111,6 +5111,11 @@ FMaterialInstanceBasePropertyOverrides::FMaterialInstanceBasePropertyOverrides()
 	,DisplacementScaling()
 	,DisplacementFadeRange()
 	,MaxWorldPositionOffsetDisplacement(0.0f)
+
+	// Begin TopRP changes 11
+	,bOverride_RenderToonOutline(false)
+	,bRenderToonOutline(false)
+	// End TopRP changes
 {
 }
 
@@ -5143,7 +5148,14 @@ bool FMaterialInstanceBasePropertyOverrides::operator==(const FMaterialInstanceB
 		DisplacementScaling == Other.DisplacementScaling &&
 		bEnableDisplacementFade == Other.bEnableDisplacementFade &&
 		DisplacementFadeRange == Other.DisplacementFadeRange &&
-		MaxWorldPositionOffsetDisplacement == Other.MaxWorldPositionOffsetDisplacement;
+		MaxWorldPositionOffsetDisplacement == Other.MaxWorldPositionOffsetDisplacement
+		
+		// Begin TopRP changes 12
+		&&
+		bOverride_RenderToonOutline == Other.bOverride_RenderToonOutline &&
+		bRenderToonOutline == Other.bRenderToonOutline
+		// End TopRP changes
+		;
 }
 
 bool FMaterialInstanceBasePropertyOverrides::operator!=(const FMaterialInstanceBasePropertyOverrides& Other)const
