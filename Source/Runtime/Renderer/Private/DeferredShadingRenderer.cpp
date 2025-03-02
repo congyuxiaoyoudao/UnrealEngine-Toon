@@ -2532,6 +2532,10 @@ void FDeferredShadingSceneRenderer::Render(FRDGBuilder& GraphBuilder)
 			// VisualizeVirtualShadowMap TODO
 		}
 
+		// Begin TopRP changes
+		RenderToonOutlinePass(GraphBuilder, SceneTextures);
+		// End TopRP changes
+
 		FRDGTextureRef ExposureIlluminanceSetup = nullptr;
 		if (!bHasRayTracedOverlay)
 		{

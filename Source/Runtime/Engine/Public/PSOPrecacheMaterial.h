@@ -53,8 +53,9 @@ typedef IPSOCollector* (*PSOCollectorCreateFunction)(ERHIFeatureLevel::Type InFe
 class FPSOCollectorCreateManager
 {
 public:
-	constexpr static uint32 MaxPSOCollectorCount = 64;
-
+	// Begin TopRP changes 64 -> 65
+	constexpr static uint32 MaxPSOCollectorCount = 65;
+	// End TopRP changes
 	static int32 GetPSOCollectorCount(EShadingPath ShadingPath) { return PSOCollectorCount[(uint32)ShadingPath]; }
 	static PSOCollectorCreateFunction GetCreateFunction(EShadingPath ShadingPath, int32 Index)
 	{

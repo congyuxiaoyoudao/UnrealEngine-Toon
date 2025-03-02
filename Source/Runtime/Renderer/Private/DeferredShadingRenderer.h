@@ -640,6 +640,12 @@ private:
 	void RenderPrePass(FRDGBuilder& GraphBuilder, TArrayView<FViewInfo> InViews, FRDGTextureRef SceneDepthTexture, FInstanceCullingManager& InstanceCullingManager, FRDGTextureRef* FirstStageDepthBuffer);
 	void RenderPrePassHMD(FRDGBuilder& GraphBuilder, TArrayView<FViewInfo> InViews, FRDGTextureRef SceneDepthTexture);
 
+	// Begin TopRP changes
+	void RenderToonOutlinePass(
+		FRDGBuilder& GraphBuilder,
+		FSceneTextures& SceneTextures);
+	// End TopRP changes
+	
 	void RenderFog(
 		FRDGBuilder& GraphBuilder,
 		const FMinimalSceneTextures& SceneTextures,

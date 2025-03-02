@@ -1,0 +1,51 @@
+#include "Common.ush"
+#include "/Engine/Generated/Material.ush"
+#include "/Engine/Generated/VertexFactory.ush"
+
+struct FSimpleMeshPassVSToPS
+{
+	FVertexFactoryInterpolantsVSToPS FactoryInterpolants;
+	float4 Position : SV_POSITION;
+};
+
+float OutLineWidth;// form cpp
+float3 OutLineColor;
+
+#if VERTEXSHADER
+void MainVS(
+	FVertexFactoryInput Input,
+	out FSimpleMeshPassVSToPS Output)
+{
+	ResolvedView = ResolveView();// view
+	
+	FVertexFactoryIntermediates VFIntermediates = GetVertexFactoryIntermediates(Input);
+	
+	float4 PosWS = VertexFactoryGetWorldPosition(Input, VFIntermediates);
+	float3 NormalWS = VertexFactoryGetWorldNormal(Input, VFIntermediates);
+
+	// TBN matrix local
+	float3x3 TangentToLocal = VertexFactoryGetTangentToLocal(Input, VFIntermediates);
+
+	FMaterialVertexParameters VertexParameters = GetMaterialVertexParameters(Input, VFIntermediates, PosWS.xyz, TangentToLocal);
+	PosWS.xyz += GetMaterialWorldPositionOffset(VertexParameters);
+	PosWS.xyz += NormalWS * OutLineWidth;
+    
+	float4 RasterizedWorldPosition = VertexFactoryGetRasterizedWorldPosition(Input, VFIntermediates, PosWS);
+
+	Output.FactoryInterpolants = VertexFactoryGetInterpolantsVSToPS(Input, VFIntermediates, VertexParameters);
+	Output.Position = mul(RasterizedWorldPosition, ResolvedView.TranslatedWorldToClip);
+
+	float2 ExtentDir = normalize(mul(float4(NormalWS, 1.0f), ResolvedView.TranslatedWorldToClip).xy);
+	float Scale = clamp(0.0f, 0.5f, Output.Position.w * OutLineWidth * 0.1f);
+	//float Scale = clamp(0.0f, 0.5f, Output.Position.w * 0.1f);
+	Output.Position.xy += ExtentDir * Scale;
+}
+#endif // VERTEXSHADER
+
+void MainPS(
+	FSimpleMeshPassVSToPS Input,
+	out float4 OutColor : SV_Target0)
+{
+	OutColor = float4(OutLineColor, 1.0);
+	//OutColor = float4(0.0, 0.0, 0.0, 1.0);
+}

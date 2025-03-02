@@ -1577,6 +1577,7 @@ void FRelevancePacket::ComputeRelevance(FDynamicPrimitiveIndexList& DynamicPrimi
 										}
 									}
 								}
+								
 							}
 
 							// Add depth commands.
@@ -1631,6 +1632,9 @@ void FRelevancePacket::ComputeRelevance(FDynamicPrimitiveIndexList& DynamicPrimi
 								else // Regular shading path
 								{
 									DrawCommandPacket.AddCommandsForMesh(PrimitiveIndex, PrimitiveSceneInfo, StaticMeshRelevance, StaticMesh, CullingPayloadFlags, Scene, bCanCache, EMeshPass::BasePass);
+									// Begin TopRP changes
+									DrawCommandPacket.AddCommandsForMesh(PrimitiveIndex, PrimitiveSceneInfo, StaticMeshRelevance, StaticMesh, CullingPayloadFlags, Scene, bCanCache, EMeshPass::ToonOutlinePass);
+									// End TopRP changes
 									MarkMask |= EMarkMaskBits::StaticMeshVisibilityMapMask;
 
 									if (StaticMeshRelevance.bUseSkyMaterial)
@@ -2294,6 +2298,11 @@ static void ComputeDynamicMeshRelevance(
 			PassMask.Set(EMeshPass::BasePass);
 			View.NumVisibleDynamicMeshElements[EMeshPass::BasePass] += NumElements;
 
+			// Begin TopRP changes
+			PassMask.Set(EMeshPass::ToonOutlinePass);
+			View.NumVisibleDynamicMeshElements[EMeshPass::ToonOutlinePass] += NumElements;
+			// End TopRP changes
+			
 			if (ViewRelevance.bUsesSkyMaterial)
 			{
 				PassMask.Set(EMeshPass::SkyPass);
