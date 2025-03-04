@@ -8,6 +8,7 @@
 class FToonOutlineMeshPassProcessor : public FMeshPassProcessor
 {
 public:
+	//const FScene* InScene, ERHIFeatureLevel::Type InFeatureLevel, const FSceneView* InViewIfDynamicMeshCommand, FMeshPassDrawListContext* InDrawListContext
 	FToonOutlineMeshPassProcessor(
 		const FScene* Scene,
 		const FSceneView* InViewIfDynamicMeshCommand,
@@ -49,7 +50,7 @@ public:
 		: FMeshMaterialShader(Initializer)
 	{
 		// if we has params  bind them here
-		OutLineWidth.Bind(Initializer.ParameterMap, TEXT("OutLineWidth"));
+		OutlineWidth.Bind(Initializer.ParameterMap, TEXT("OutlineWidth"));
 		//BindSceneTextureUniformBufferDependentOnShadingPath(Initializer, PassUniformBuffer, PassUniformBuffer);
 	}
 
@@ -78,11 +79,11 @@ public:
 		FMeshDrawSingleShaderBindings& ShaderBindings) const
 	{
 		FMeshMaterialShader::GetShaderBindings(Scene, FeatureLevel, PrimitiveSceneProxy, MaterialRenderProxy, Material, ShaderElementData, ShaderBindings);
-		ShaderBindings.Add(OutLineWidth, 1.0);
+		ShaderBindings.Add(OutlineWidth, 1.0);
 	}
 
 	/** The parameter to use for setting the Mesh OutLine Scale. */
-	LAYOUT_FIELD(FShaderParameter, OutLineWidth);
+	LAYOUT_FIELD(FShaderParameter, OutlineWidth);
 };
 
 /**
@@ -98,7 +99,7 @@ public:
 		: FMeshMaterialShader(Initializer)
 	{
 		// if we has color bind it here
-		OutLineColor.Bind(Initializer.ParameterMap, TEXT("OutLineColor"));
+		OutlineColor.Bind(Initializer.ParameterMap, TEXT("OutlineColor"));
 	}
 
 	static void ModifyCompilationEnvironment(const FMaterialShaderPermutationParameters& Parameters, FShaderCompilerEnvironment& OutEnvironment)
@@ -128,13 +129,13 @@ public:
 		FMeshMaterialShader::GetShaderBindings(Scene, FeatureLevel, PrimitiveSceneProxy, MaterialRenderProxy, Material,  ShaderElementData, ShaderBindings);
 
 		// Get ToonOutLine Data from Material
-		// const FLinearColor OutLineColorFromMat = Material.GetToonOutLineColor();
-		// FVector3f Color(OutLineColorFromMat.R, OutLineColorFromMat.G, OutLineColorFromMat.G);
+		// const FLinearColor OutlineColorFromMat = Material.GetToonOutlineColor();
+		// FVector3f Color(OutlineColorFromMat.R, OutlineColorFromMat.G, OutlineColorFromMat.G);
 		FVector3f Color(1.0, 0.0, 0.0);
 		// Bind to Shader
-		ShaderBindings.Add(OutLineColor, Color);
+		ShaderBindings.Add(OutlineColor, Color);
 	}
 	
 	/** The parameter to use for setting the Mesh OutLine Color. */
-	LAYOUT_FIELD(FShaderParameter, OutLineColor);
+	LAYOUT_FIELD(FShaderParameter, OutlineColor);
 };

@@ -8,8 +8,8 @@ struct FSimpleMeshPassVSToPS
 	float4 Position : SV_POSITION;
 };
 
-float OutLineWidth;// form cpp
-float3 OutLineColor;
+float OutlineWidth;// form cpp
+float3 OutlineColor;
 
 #if VERTEXSHADER
 void MainVS(
@@ -28,7 +28,7 @@ void MainVS(
 
 	FMaterialVertexParameters VertexParameters = GetMaterialVertexParameters(Input, VFIntermediates, PosWS.xyz, TangentToLocal);
 	PosWS.xyz += GetMaterialWorldPositionOffset(VertexParameters);
-	PosWS.xyz += NormalWS * OutLineWidth;
+	PosWS.xyz += NormalWS * OutlineWidth;
     
 	float4 RasterizedWorldPosition = VertexFactoryGetRasterizedWorldPosition(Input, VFIntermediates, PosWS);
 
@@ -36,8 +36,7 @@ void MainVS(
 	Output.Position = mul(RasterizedWorldPosition, ResolvedView.TranslatedWorldToClip);
 
 	float2 ExtentDir = normalize(mul(float4(NormalWS, 1.0f), ResolvedView.TranslatedWorldToClip).xy);
-	float Scale = clamp(0.0f, 0.5f, Output.Position.w * OutLineWidth * 0.1f);
-	//float Scale = clamp(0.0f, 0.5f, Output.Position.w * 0.1f);
+	float Scale = clamp(0.0f, 0.5f, Output.Position.w  * 0.1f);
 	Output.Position.xy += ExtentDir * Scale;
 }
 #endif // VERTEXSHADER
@@ -46,6 +45,6 @@ void MainPS(
 	FSimpleMeshPassVSToPS Input,
 	out float4 OutColor : SV_Target0)
 {
-	OutColor = float4(OutLineColor, 1.0);
+	OutColor = float4(OutlineColor, 1.0);
 	//OutColor = float4(0.0, 0.0, 0.0, 1.0);
 }
