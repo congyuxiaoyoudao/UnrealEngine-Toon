@@ -2305,6 +2305,13 @@ bool FMaterialResource::HasRenderTracePhysicalMaterialOutputs() const
 	return Material->GetRenderTracePhysicalMaterialOutputs().Num() > 0;
 }
 
+// Begin TopRP changes Customize Material Editor 7. Add virtual interface to FMaterialResource
+bool FMaterialResource::ShouldRenderToonOutline() const
+{
+	return MaterialInstance ? MaterialInstance->ShouldRenderToonOutline() : Material->ShouldRenderToonOutline();
+}
+// End TopRP changes
+
 uint16 FMaterialResource::GetPreshaderGap() const
 {
 	return Material->PreshaderGap;
@@ -5112,8 +5119,8 @@ FMaterialInstanceBasePropertyOverrides::FMaterialInstanceBasePropertyOverrides()
 	,DisplacementFadeRange()
 	,MaxWorldPositionOffsetDisplacement(0.0f)
 
-	// Begin TopRP changes 11
-	,bOverride_RenderToonOutline(false)
+	// Begin TopRP changes Customize Material Editor 9. Initialize the new properties
+	,bOverride_bRenderToonOutline(false)
 	,bRenderToonOutline(false)
 	// End TopRP changes
 {
@@ -5150,9 +5157,9 @@ bool FMaterialInstanceBasePropertyOverrides::operator==(const FMaterialInstanceB
 		DisplacementFadeRange == Other.DisplacementFadeRange &&
 		MaxWorldPositionOffsetDisplacement == Other.MaxWorldPositionOffsetDisplacement
 		
-		// Begin TopRP changes 12
+		// Begin TopRP changes Customize Material Editor 10. Compare the new properties
 		&&
-		bOverride_RenderToonOutline == Other.bOverride_RenderToonOutline &&
+		bOverride_bRenderToonOutline == Other.bOverride_bRenderToonOutline &&
 		bRenderToonOutline == Other.bRenderToonOutline
 		// End TopRP changes
 		;

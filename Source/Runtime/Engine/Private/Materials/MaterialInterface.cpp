@@ -1431,6 +1431,13 @@ bool UMaterialInterface::GetCastDynamicShadowAsMasked() const
 	return false;
 }
 
+// Begin TopRP changes Customize Material Editor 1. Add virtual interface
+bool UMaterialInterface::ShouldRenderToonOutline() const
+{
+	return false;
+}
+// End TopRP changes
+
 bool UMaterialInterface::HasVertexInterpolator() const
 {
 	return false;

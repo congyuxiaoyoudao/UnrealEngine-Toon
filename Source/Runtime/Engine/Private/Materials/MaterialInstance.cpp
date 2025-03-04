@@ -2331,7 +2331,7 @@ void UMaterialInstance::UpdateOverridableBaseProperties()
 		DisplacementFadeRange = FDisplacementFadeRange();
 		MaxWorldPositionOffsetDisplacement = 0.0f;
 
-		// Begin TopRP changes 4. refresh variable
+		// Begin TopRP changes Customize Material Editor 4. refresh variable
 		bRenderToonOutline = false;
 		// End TopRP changes
 		return;
@@ -2514,15 +2514,15 @@ void UMaterialInstance::UpdateOverridableBaseProperties()
 		BasePropertyOverrides.MaxWorldPositionOffsetDisplacement = MaxWorldPositionOffsetDisplacement;
 	}
 
-	// Begin TopRP changes 13. Update override
-	if (BasePropertyOverrides.bOverride_RenderToonOutline)
+	// Begin TopRP changes Customize Material Editor 11. Update variable whether need override
+	if (BasePropertyOverrides.bOverride_bRenderToonOutline)
 	{
-		bRenderToonOutline = BasePropertyOverrides.bOverride_RenderToonOutline;
+		bRenderToonOutline = BasePropertyOverrides.bRenderToonOutline != 0;
 	}
 	else
 	{
-		bRenderToonOutline = Parent->RenderToonOutline();
-		BasePropertyOverrides.bOverride_RenderToonOutline = bRenderToonOutline;
+		bRenderToonOutline = Parent->ShouldRenderToonOutline();
+		BasePropertyOverrides.bRenderToonOutline = bRenderToonOutline;
 	}
 	// End TopRP changes
 }
@@ -4773,8 +4773,8 @@ void UMaterialInstance::GetBasePropertyOverridesHash(FSHAHash& OutHash)const
 	GetPropertyOverrideHash(IsDisplacementFadeEnabled(), Mat->IsDisplacementFadeEnabled(), TEXT("bOverride_bEnableDisplacementFade"));
 	GetPropertyOverrideHash(GetDisplacementFadeRange(), Mat->GetDisplacementFadeRange(), TEXT("bOverride_DisplacementFadeRange"));
 	GetPropertyOverrideHash(GetMaxWorldPositionOffsetDisplacement(), Mat->GetMaxWorldPositionOffsetDisplacement(), TEXT("bOverride_MaxWorldPositionOffsetDisplacement"));
-	// Begin TopRP changes 14. store new properties in hash table
-	GetPropertyOverrideHash(RenderToonOutline(), Mat->RenderToonOutline(), TEXT("bOverride_RenderToonOutline"));
+	// Begin TopRP changes Customize Material Editor 12. Store new properties in hash table
+	GetPropertyOverrideHash(ShouldRenderToonOutline(), Mat->ShouldRenderToonOutline(), TEXT("bOverride_bRenderToonOutline"));
 	// End TopRP changes
 	if (bHasOverrides)
 	{
@@ -4804,8 +4804,8 @@ bool UMaterialInstance::HasOverridenBaseProperties() const
 		GetDisplacementScaling() != Parent->GetDisplacementScaling() ||
 		IsDisplacementFadeEnabled() != Parent->IsDisplacementFadeEnabled() ||
 		GetDisplacementFadeRange() != Parent->GetDisplacementFadeRange() ||
-		// Begin TopRP changes 5. Add overide check
-		RenderToonOutline() != Parent->RenderToonOutline() ||
+		// Begin TopRP changes Customize Material Editor 5. Add override check
+		ShouldRenderToonOutline() != Parent->ShouldRenderToonOutline() ||
 		// End TopRP changes
 		!FMath::IsNearlyEqual(GetOpacityMaskClipValue(), Parent->GetOpacityMaskClipValue()) ||
 		!FMath::IsNearlyEqual(GetMaxWorldPositionOffsetDisplacement(), Parent->GetMaxWorldPositionOffsetDisplacement());
@@ -4979,6 +4979,13 @@ bool UMaterialInstance::IsTessellationEnabled() const
 {
 	return bEnableTessellation;
 }
+
+// Begin TopRP changes Customize Material Editor 3. Add class variable and function interface to UMaterialInstance
+bool UMaterialInstance::ShouldRenderToonOutline() const
+{
+	return bRenderToonOutline;
+}
+// End TopRP changes
 
 /** Checks to see if an input property should be active, based on the state of the material */
 bool UMaterialInstance::IsPropertyActive(EMaterialProperty InProperty) const

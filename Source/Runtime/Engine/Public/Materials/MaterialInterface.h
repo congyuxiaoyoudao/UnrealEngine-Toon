@@ -253,9 +253,7 @@ UCLASS(abstract, BlueprintType, MinimalAPI, HideCategories = (Thumbnail))
 class UMaterialInterface : public UObject, public IBlendableInterface, public IInterface_AssetUserData
 {
 	GENERATED_UCLASS_BODY()
-	// Begin TopRP changes 1. Add virtual interface
-	ENGINE_API virtual bool RenderToonOutline() const { return false; }
-	// End TopRP changes
+
 #if WITH_EDITORONLY_DATA
 protected:
 	friend class UMaterialInterfaceEditorOnlyData;
@@ -965,7 +963,10 @@ public:
 	ENGINE_API virtual UNeuralProfile* GetNeuralProfile_Internal() const;
 	ENGINE_API virtual bool CastsRayTracedShadows() const;
 	ENGINE_API virtual bool IsTessellationEnabled() const;
-
+	// Begin TopRP changes Customize Material Editor 1. Add virtual interface
+	ENGINE_API virtual bool ShouldRenderToonOutline() const;
+	// End TopRP changes
+	
 	/**
 	 * Force the streaming system to disregard the normal logic for the specified duration and
 	 * instead always load all mip-levels for all textures used by this material.

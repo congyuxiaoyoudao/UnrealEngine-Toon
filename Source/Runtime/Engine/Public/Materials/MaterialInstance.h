@@ -594,11 +594,11 @@ class UMaterialInstance : public UMaterialInterface
 	virtual UMaterialInstanceEditorOnlyData* GetEditorOnlyData() override { return CastChecked<UMaterialInstanceEditorOnlyData>(Super::GetEditorOnlyData(), ECastCheckedType::NullAllowed); }
 	virtual const UMaterialInstanceEditorOnlyData* GetEditorOnlyData() const override { return CastChecked<UMaterialInstanceEditorOnlyData>(Super::GetEditorOnlyData(), ECastCheckedType::NullAllowed); }
 #endif // WITH_EDITORONLY_DATA
-	// Begin TopRP changes 3. Add class variable and function interface to MI
+	// Begin TopRP changes Customize Material Editor 3. Add class variable and function interface to UMaterialInstance
 	UPROPERTY(EditAnywhere, Category = Toon)
 	uint8 bRenderToonOutline : 1;
 
-	ENGINE_API virtual bool RenderToonOutline() const override { return bRenderToonOutline; }
+	ENGINE_API virtual bool ShouldRenderToonOutline() const override;
 	// End TopRP changes
 	/** Physical material to use for this graphics material. Used for sounds, effects etc.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=MaterialInstance)
