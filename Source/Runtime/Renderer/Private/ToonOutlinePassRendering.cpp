@@ -6,7 +6,6 @@
 #include "SimpleMeshDrawCommandPass.h"
 #include "ProfilingDebugging/CsvProfiler.h"
 
-//IMPLEMENT_SHADERPIPELINE_TYPE_VSPS(BackfaceOutlinePipeline, FToonOutlineVS, FToonOutlinePS, true);
 IMPLEMENT_MATERIAL_SHADER_TYPE(, FToonOutlineVS, TEXT("/Engine/Private/ToonOutLine.usf"), TEXT("MainVS"), SF_Vertex);
 IMPLEMENT_MATERIAL_SHADER_TYPE(, FToonOutlinePS, TEXT("/Engine/Private/ToonOutLine.usf"), TEXT("MainPS"), SF_Pixel);
 
@@ -15,7 +14,7 @@ FToonOutlineMeshPassProcessor::FToonOutlineMeshPassProcessor(
 	const FSceneView* InViewIfDynamicMeshCommand, 
 	const FMeshPassProcessorRenderState& InPassDrawRenderState, 
 	FMeshPassDrawListContext* InDrawListContext)
-	:FMeshPassProcessor(Scene, Scene->GetFeatureLevel(), InViewIfDynamicMeshCommand, InDrawListContext),
+	:FMeshPassProcessor(EMeshPass::ToonOutlinePass, Scene, Scene->GetFeatureLevel(), InViewIfDynamicMeshCommand, InDrawListContext),
 	PassDrawRenderState(InPassDrawRenderState)
 {
 	if (PassDrawRenderState.GetDepthStencilState() == nullptr)
@@ -41,7 +40,7 @@ void FToonOutlineMeshPassProcessor::AddMeshBatch(
 	{
 		const FMaterialShadingModelField ShadingModels = Material->GetShadingModels();
 		// Only Toon shading model and enable render toon outline can render this pass
-		if (ShadingModels.HasShadingModel(MSM_Toon) && Material->RenderToonOutline())
+		if (ShadingModels.HasShadingModel(MSM_Toon) && Material->ShouldRenderToonOutline())
 		{
 			const EBlendMode BlendMode = Material->GetBlendMode();
 
@@ -56,7 +55,7 @@ void FToonOutlineMeshPassProcessor::AddMeshBatch(
 					*MaterialRenderProxy,
 					*Material,
 					FM_Solid,
-					CM_CCW); //cull back
+					CM_CCW); // Cull back
 			}
 		}
 	}
