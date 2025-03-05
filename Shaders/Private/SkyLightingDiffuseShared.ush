@@ -96,6 +96,16 @@ float3 SkyLightDiffuse(FGBufferData GBuffer, float AmbientOcclusion, float2 Buff
 	const FBxDFEnergyTerms EnergyTerms = ComputeGGXSpecEnergyTerms(GBuffer.Roughness, NoV, GBuffer.SpecularColor);
 	float3 DiffuseWeight = ComputeEnergyPreservation(EnergyTerms);
 
+	// Begin TopRP changes Toon GI 1. Sky light diffuse
+	BRANCH
+	if(GBuffer.ShadingModelID == SHADINGMODELID_TOON)
+	{
+		float3 SubsurfaceColor = ExtractSubsurfaceColor(GBuffer);
+		Lighting = GBuffer.BaseColor * SubsurfaceColor;
+		return Lighting;
+	}
+	// End TopRP changes
+	
 	BRANCH
 	if (GBuffer.ShadingModelID == SHADINGMODELID_TWOSIDED_FOLIAGE)
 	{

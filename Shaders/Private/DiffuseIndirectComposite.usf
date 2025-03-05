@@ -588,7 +588,12 @@ void MainPS(
 					RoughSpecularIndirectLighting *= Occlusion.SpecularOcclusion;
 					IndirectLighting.Specular = CombineRoughSpecular(GBuffer, HasBackfaceDiffuse(Material), NoV, SpecularIndirectLighting, RoughSpecularIndirectLighting, SpecularColor, EnvBRDFValue);
 				#else
-					IndirectLighting.Specular = AddContrastAndSpecularScale(SpecularIndirectLighting.xyz) * EnvBRDFValue;
+					// Begin TopRP changes Toon GI 3. Lumen specular
+					if(GBuffer.ShadingModelID == SHADINGMODELID_TOON)
+						IndirectLighting.Specular = AddContrastAndSpecularScale(SpecularIndirectLighting.xyz) * EnvBRDF(SpecularColor,1.0f,NoV);
+					else
+						IndirectLighting.Specular = AddContrastAndSpecularScale(SpecularIndirectLighting.xyz) * EnvBRDFValue;
+					// End TopRP changes
 				#endif
 			}
 			}
