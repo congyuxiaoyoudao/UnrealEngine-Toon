@@ -2532,9 +2532,7 @@ void FDeferredShadingSceneRenderer::Render(FRDGBuilder& GraphBuilder)
 			// VisualizeVirtualShadowMap TODO
 		}
 
-		// Begin TopRP changes
-		RenderToonOutlinePass(GraphBuilder, SceneTextures);
-		// End TopRP changes
+
 
 		FRDGTextureRef ExposureIlluminanceSetup = nullptr;
 		if (!bHasRayTracedOverlay)
@@ -2843,6 +2841,10 @@ void FDeferredShadingSceneRenderer::Render(FRDGBuilder& GraphBuilder)
 
 			RenderLights(GraphBuilder, SceneTextures, TranslucencyLightingVolumeTextures, LightingChannelsTexture, SortedLightSet);
 
+			// Begin TopRP changes Draw OutlinePass after lighting
+			RenderToonOutlinePass(GraphBuilder, SceneTextures);
+			// End TopRP changes
+			
 			if (SortedLightSet.MegaLightsLightStart < SortedLightSet.SortedLights.Num())
 			{
 				RenderMegaLights(
