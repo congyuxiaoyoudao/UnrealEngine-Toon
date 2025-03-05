@@ -79,7 +79,11 @@ public:
 		FMeshDrawSingleShaderBindings& ShaderBindings) const
 	{
 		FMeshMaterialShader::GetShaderBindings(Scene, FeatureLevel, PrimitiveSceneProxy, MaterialRenderProxy, Material, ShaderElementData, ShaderBindings);
-		ShaderBindings.Add(OutlineWidth, 1.0);
+
+		// Get ToonOutLine Data from Material
+		const float OutlineWidthFromMat = Material.GetOutlineWidth();
+		
+		ShaderBindings.Add(OutlineWidth, OutlineWidthFromMat);
 	}
 
 	/** The parameter to use for setting the Mesh OutLine Scale. */
@@ -129,9 +133,9 @@ public:
 		FMeshMaterialShader::GetShaderBindings(Scene, FeatureLevel, PrimitiveSceneProxy, MaterialRenderProxy, Material,  ShaderElementData, ShaderBindings);
 
 		// Get ToonOutLine Data from Material
-		// const FLinearColor OutlineColorFromMat = Material.GetToonOutlineColor();
-		// FVector3f Color(OutlineColorFromMat.R, OutlineColorFromMat.G, OutlineColorFromMat.G);
-		FVector3f Color(1.0, 0.0, 0.0);
+		const FLinearColor OutlineColorFromMat = Material.GetOutlineColor();
+		FVector3f Color(OutlineColorFromMat.R, OutlineColorFromMat.G, OutlineColorFromMat.G);
+		//FVector3f Color(1.0, 0.0, 0.0);
 		// Bind to Shader
 		ShaderBindings.Add(OutlineColor, Color);
 	}

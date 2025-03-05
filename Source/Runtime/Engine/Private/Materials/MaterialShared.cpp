@@ -2310,6 +2310,16 @@ bool FMaterialResource::ShouldRenderToonOutline() const
 {
 	return MaterialInstance ? MaterialInstance->ShouldRenderToonOutline() : Material->ShouldRenderToonOutline();
 }
+
+float FMaterialResource::GetOutlineWidth() const
+{
+	return Material->OutlineWidth;
+}
+
+FLinearColor FMaterialResource::GetOutlineColor() const
+{
+	return Material->OutlineColor;
+}
 // End TopRP changes
 
 uint16 FMaterialResource::GetPreshaderGap() const

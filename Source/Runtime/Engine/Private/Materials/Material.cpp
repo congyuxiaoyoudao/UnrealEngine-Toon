@@ -7122,6 +7122,17 @@ bool UMaterial::ShouldRenderToonOutline() const
 {
 	return bRenderToonOutline;
 }
+
+float UMaterial::GetOutlineWidth() const
+{
+	return OutlineWidth;
+}
+
+FLinearColor UMaterial::GetOutlineColor() const
+{
+	return OutlineColor;
+}
+
 // End TopRP changes
 
 USubsurfaceProfile* UMaterial::GetSubsurfaceProfile_Internal() const

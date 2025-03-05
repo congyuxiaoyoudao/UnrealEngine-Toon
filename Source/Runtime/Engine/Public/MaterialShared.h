@@ -1925,6 +1925,8 @@ class FMaterial
 public:	
 	// Begin TopRP changes Customize Material Editor 6. Add virtual interface to FMaterial
 	ENGINE_API virtual bool ShouldRenderToonOutline() const { return false; }
+	ENGINE_API virtual float GetOutlineWidth() const { return 0.0f; }
+	ENGINE_API virtual FLinearColor GetOutlineColor() const { return FLinearColor::Black; }
 	// End TopRP changes
 #if UE_CHECK_FMATERIAL_LIFETIME
 	ENGINE_API uint32 AddRef() const;
@@ -3032,6 +3034,8 @@ public:
 	ENGINE_API virtual int32 GetNeuralProfileId() const override;
 	// Begin TopRP changes Customize Material Editor 7. Add virtual interface to FMaterialResource
 	ENGINE_API virtual bool ShouldRenderToonOutline() const override;
+	ENGINE_API virtual float GetOutlineWidth() const override;
+	ENGINE_API virtual FLinearColor GetOutlineColor() const override;
 	// End TopRP changes
 	
 	/**

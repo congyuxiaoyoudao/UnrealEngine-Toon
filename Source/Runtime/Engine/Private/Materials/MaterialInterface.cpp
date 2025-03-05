@@ -1436,6 +1436,17 @@ bool UMaterialInterface::ShouldRenderToonOutline() const
 {
 	return false;
 }
+
+float UMaterialInterface::GetOutlineWidth() const
+{
+	return 0.0f;
+}
+
+FLinearColor UMaterialInterface::GetOutlineColor() const
+{
+	return FLinearColor::Black;
+}
+
 // End TopRP changes
 
 bool UMaterialInterface::HasVertexInterpolator() const

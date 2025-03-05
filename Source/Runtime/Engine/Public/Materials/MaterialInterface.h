@@ -965,6 +965,8 @@ public:
 	ENGINE_API virtual bool IsTessellationEnabled() const;
 	// Begin TopRP changes Customize Material Editor 1. Add virtual interface
 	ENGINE_API virtual bool ShouldRenderToonOutline() const;
+	ENGINE_API virtual float GetOutlineWidth() const;
+	ENGINE_API virtual FLinearColor GetOutlineColor() const;
 	// End TopRP changes
 	
 	/**

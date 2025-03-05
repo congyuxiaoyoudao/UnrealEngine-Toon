@@ -3717,6 +3717,18 @@ half3 GetMaterialTranslucentMultipleScatteringExtinction()
 %{get_material_translucent_multiple_scattering_extinction};
 }
 
+// Begin TopRP changes Pass parameters to shader
+half GetMaterialToonOutlineWidth()
+{
+%{get_material_toon_outline_width};
+}
+
+half3 GetMaterialToonOutlineColor()
+{
+%{get_material_toon_outline_color};
+}
+// End TopRP changes
+
 // This is the clip value constant that is defined in the material (range 0..1)
 // Use GetMaterialMask() to get the Material Mask combined with this.
 half GetMaterialOpacityMaskClipValue()

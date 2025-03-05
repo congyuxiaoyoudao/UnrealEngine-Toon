@@ -427,10 +427,21 @@ class UMaterial : public UMaterialInterface
 	virtual const UMaterialEditorOnlyData* GetEditorOnlyData() const override { return CastChecked<UMaterialEditorOnlyData>(Super::GetEditorOnlyData(), ECastCheckedType::NullAllowed); }
 #endif // WITH_EDITORONLY_DATA
 	// Begin TopRP changes Customize Material Editor 2. Add class variable and function interface to UMaterial
+	/** Indicate rendering toon outline pass.*/
 	UPROPERTY(EditAnywhere, Category = Toon)
 	uint8 bRenderToonOutline : 1;
 
+	/** Value that control outline width.*/
+	UPROPERTY(EditAnywhere, Category = Toon)
+	float OutlineWidth;
+
+	/** Outline color.*/
+	UPROPERTY(EditAnywhere, Category = Toon)
+	FLinearColor OutlineColor;
+	
 	ENGINE_API virtual bool ShouldRenderToonOutline() const override;
+	ENGINE_API virtual float GetOutlineWidth() const override;
+	ENGINE_API virtual FLinearColor GetOutlineColor() const override;
 	// End TopRP changes
 	// Physics.
 	

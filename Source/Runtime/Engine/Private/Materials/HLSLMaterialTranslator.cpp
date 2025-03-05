@@ -16301,6 +16301,14 @@ void FHLSLMaterialTranslator::PrepareMaterialSourceStringParameters()
 		MaterialSourceTemplateParams.Add({ TEXT("get_material_translucent_multiple_scattering_extinction"), FString::Printf(TEXT("return MaterialFloat3(%.5f, %.5f, %.5f)"), Extinction.R, Extinction.G, Extinction.B) });
 	}
 
+	// Begin TopRP changes Pass parameters to shader
+	MaterialSourceTemplateParams.Add({ TEXT("get_material_toon_outline_width"), FString::Printf(TEXT("return %.5f"),Material->GetOutlineWidth())});
+	{
+		FLinearColor OutlineColor = Material->GetOutlineColor();
+		MaterialSourceTemplateParams.Add({ TEXT("get_material_toon_outline_color"), FString::Printf(TEXT("return MaterialFloat3(%.5f, %.5f, %.5f)"), OutlineColor.R, OutlineColor.G, OutlineColor.B) });
+	}
+	// End TopRP changes
+	
 	MaterialSourceTemplateParams.Add({ TEXT("get_material_opacity_mask_clip_value"), FString::Printf(TEXT("return %.5f"), Material->GetOpacityMaskClipValue()) });
 
 	MaterialSourceTemplateParams.Add({ TEXT("get_material_world_position_offset_raw"), !bEnableExecutionFlow ? *GenerateFunctionCode(MP_WorldPositionOffset, BaseDerivativeVariation) : TEXT("return Parameters.MaterialAttributes.WorldPositionOffset") });
