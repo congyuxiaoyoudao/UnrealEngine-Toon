@@ -887,6 +887,10 @@ class FDeferredLightPS : public FGlobalShader
 		SHADER_PARAMETER_STRUCT_REF(FViewUniformShaderParameters, View)
 		SHADER_PARAMETER_RDG_UNIFORM_BUFFER(FDeferredLightUniformStruct, DeferredLight)
 		SHADER_PARAMETER_RDG_UNIFORM_BUFFER(FLightFunctionAtlasGlobalParameters, LightFunctionAtlas)
+		// Begin TopRP changes Anti-Aliasing 2. Add bilinear sampler for toon light attenuation texture
+		SHADER_PARAMETER_SAMPLER(SamplerState, ToonLightAttenuationTextureSampler)
+		// End TopRP changes
+	
 		// For virtual shadow map mask
 		SHADER_PARAMETER_RDG_UNIFORM_BUFFER(FVirtualShadowMapUniformParameters, VirtualShadowMap)
 		SHADER_PARAMETER(int32, VirtualShadowMapId)
@@ -2444,6 +2448,10 @@ static FDeferredLightPS::FParameters GetDeferredLightPSParameters(
 	Out.LightAttenuationTextureSampler = TStaticSamplerState<SF_Point, AM_Wrap, AM_Wrap, AM_Wrap>::GetRHI();
 	Out.View = View.ViewUniformBuffer;
 	Out.DeferredLight = CreateDeferredLightUniformBuffer(GraphBuilder, View, *LightSceneInfo);
+	// Begin TopRP changes Anti-Aliasing 2. Add bilinear sampler for toon light attenuation texture
+	Out.ToonLightAttenuationTextureSampler = TStaticSamplerState<SF_Bilinear,AM_Wrap,AM_Wrap,AM_Wrap>::GetRHI();
+	// End TopRP changes
+	
 	// PS - Hair (default value)
 	Out.ScreenShadowMaskSubPixelTexture = WhiteDummy;
 	Out.HairTransmittanceBuffer = BufferDummySRV;
@@ -3052,6 +3060,10 @@ static FSimpleLightsStandardDeferredParameters GetRenderLightSimpleParameters(
 	Out.PS.LightAttenuationTextureSampler = TStaticSamplerState<SF_Point, AM_Wrap, AM_Wrap, AM_Wrap>::GetRHI();
 	Out.PS.View = View.ViewUniformBuffer;
 	Out.PS.DeferredLight = CreateDeferredLightUniformBuffer(GraphBuilder, View, SimpleLight, SimpleLightPosition);
+	// Begin TopRP changes Anti-Aliasing 2. Add bilinear sampler for toon light attenuation texture
+	Out.PS.ToonLightAttenuationTextureSampler = TStaticSamplerState<SF_Bilinear, AM_Wrap, AM_Wrap, AM_Wrap>::GetRHI();
+	// End TopRP changes
+	
 	// PS - Hair (default)
 	Out.PS.ScreenShadowMaskSubPixelTexture = WhiteDummy;
 	Out.PS.HairTransmittanceBuffer = BufferDummySRV;

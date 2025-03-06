@@ -841,6 +841,9 @@ MaterialFloat PhongShadingPow(MaterialFloat X, MaterialFloat Y)
 // shadow and light function
 Texture2D		LightAttenuationTexture;
 SamplerState	LightAttenuationTextureSampler;
+// Begin TopRP changes Anti-Aliasing 1. Declare toon sampler
+SamplerState	ToonLightAttenuationTextureSampler;
+// End TopRP changes
 
 // We don't use an inline function so we can avoid type promotion/ coercion.
 #define RETURN_COLOR( Color ) ( Color )

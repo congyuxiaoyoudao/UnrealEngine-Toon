@@ -149,6 +149,47 @@ float4 GetLightAttenuationFromShadow(in FInputParams InputParams, float SceneDep
 	}
 }
 
+// Begin TopRP changes Anti-Aliasing 3. Get light attenuation from anti-aliasinged shadowmap
+// Anti-aliasing for toon shading
+float4 GetPerPixelLightAttenuationToonAA(float2 UV)  
+{  
+	int texture_x, texture_y;  
+	LightAttenuationTexture.GetDimensions(texture_x, texture_y);  
+
+	float2 texelSize = float2(1.0 / texture_x, 1.0 / texture_y);  
+
+	float2 sampleOffsets[4] = {  
+		float2(-1.5,  0.5),  
+		float2( 0.5,  0.5),  
+		float2(-1.5, -1.5),  
+		float2( 0.5, -1.5)  
+	 };  
+
+	float4 shadowSum = float4(0,0,0,0);  
+	for (int i = 0; i < 4; i++)  
+	{  
+		float2 sampleUV = UV + sampleOffsets[i] * texelSize;  
+		shadowSum += DecodeLightAttenuation(Texture2DSampleLevel(LightAttenuationTexture, ToonLightAttenuationTextureSampler, sampleUV, 0));  
+	}  
+	return shadowSum * 0.25;  
+}
+
+// Get toon light attenuation from shadow 
+float4 GetLightAttenuationFromShadowToonAA(in FInputParams InputParams, float SceneDepth, float3 TranslatedWorldPosition)  
+{  
+	float4 LightAttenuation = float4(1, 1, 1, 1);  
+
+#if USE_VIRTUAL_SHADOW_MAP_MASK  
+	if (VirtualShadowMapId != INDEX_NONE)  
+	{       float ShadowMask = GetVirtualShadowMapMaskForLight(  
+		  ShadowMaskBits[InputParams.PixelPos],          uint2(InputParams.PixelPos),          SceneDepth,          VirtualShadowMapId,          TranslatedWorldPosition);       return ShadowMask.xxxx;  
+	}    else  
+#endif  
+	{  
+		return GetPerPixelLightAttenuationToonAA(InputParams.ScreenUV);  
+	}  
+}
+// End TopRP changes
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -360,8 +401,19 @@ void DeferredLightPixelMain(
 		float Dither = InterleavedGradientNoise(InputParams.PixelPos, View.StateFrameIndexMod8);
 
 		float SurfaceShadow = 1.0f;
-		
-		float4 LightAttenuation = GetLightAttenuationFromShadow(InputParams, SceneDepth, DerivedParams.TranslatedWorldPosition);
+
+		// Begin TopRP changes Anti-Aliasing 4. Add branch condition for our shading model to get antialiasinged shadow
+		float4 LightAttenuation;
+		BRANCH
+		if (ScreenSpaceData.GBuffer.ShadingModelID == SHADINGMODELID_TOON)
+		{
+			LightAttenuation = GetLightAttenuationFromShadowToonAA(InputParams, SceneDepth, DerivedParams.TranslatedWorldPosition);
+		}
+		else
+		{
+			LightAttenuation = GetLightAttenuationFromShadow(InputParams, SceneDepth, DerivedParams.TranslatedWorldPosition);
+		}
+		// End TopRP changes
 #if USE_ADAPTIVE_VOLUMETRIC_SHADOW_MAP
 		float3 WorldPosition = DFFastSubtractDemote(DerivedParams.TranslatedWorldPosition, PrimaryView.PreViewTranslation);
 		float3 WorldToLight = LightData.Direction * 10000;
