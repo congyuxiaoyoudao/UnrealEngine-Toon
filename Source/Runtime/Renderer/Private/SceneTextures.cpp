@@ -24,6 +24,10 @@
 #include "Substrate/Substrate.h"
 #include "VisualizeTexture.h"
 
+// Begin TopRP changes Add Toon Buffer 4. Include ToonPassRendering.h
+#include "ToonPassRendering.h"
+// End TopRP changes
+
 static TAutoConsoleVariable<int32> CVarSceneTargetsResizeMethod(
 	TEXT("r.SceneRenderTargetResizeMethod"),
 	0,
@@ -672,6 +676,12 @@ void FSceneTextures::InitializeViewFamily(FRDGBuilder& GraphBuilder, FViewFamily
 		// Screen Space Ambient Occlusion
 		SceneTextures.ScreenSpaceAO = CreateScreenSpaceAOTexture(GraphBuilder, ViewFamily.GetFeatureLevel(), Config.Extent);
 
+		// Begin TopRP changes Add Toon Buffer 5. Create Toon Buffer Textures
+		SceneTextures.TBufferA = CreateToonBufferTexture(GraphBuilder, Config.Extent,GFastVRamConfig.TBufferA);
+		SceneTextures.TBufferB = CreateToonBufferTexture(GraphBuilder, Config.Extent,GFastVRamConfig.TBufferB);
+		SceneTextures.TBufferC = CreateToonBufferTexture(GraphBuilder, Config.Extent,GFastVRamConfig.TBufferC);
+		// End TopRP changes
+		
 		// Small Depth
 		const FIntPoint SmallDepthExtent = GetDownscaledExtent(Config.Extent, Config.SmallDepthDownsampleFactor);
 		const FRDGTextureDesc SmallDepthDesc(FRDGTextureDesc::Create2D(SmallDepthExtent, PF_DepthStencil, FClearValueBinding::None, TexCreate_DepthStencilTargetable | TexCreate_ShaderResource));
@@ -1043,6 +1053,11 @@ void SetupSceneTextureUniformParameters(
 	SceneTextureParameters.GBufferETexture = SystemTextures.Black;
 	SceneTextureParameters.GBufferFTexture = SystemTextures.MidGrey;
 	SceneTextureParameters.GBufferVelocityTexture = SystemTextures.Black;
+	// Begin TopRP changes Add Toon Buffer 6. Initialize Toon Buffer textures
+	SceneTextureParameters.TBufferATexture = SystemTextures.Black;
+	SceneTextureParameters.TBufferBTexture = SystemTextures.Black;
+	SceneTextureParameters.TBufferCTexture = SystemTextures.Black;
+	// End TopRP changes
 	SceneTextureParameters.ScreenSpaceAOTexture = GetScreenSpaceAOFallback(SystemTextures);
 	SceneTextureParameters.CustomDepthTexture = SystemTextures.DepthDummy;
 	SceneTextureParameters.CustomStencilTexture = SystemTextures.StencilDummySRV;
@@ -1099,6 +1114,23 @@ void SetupSceneTextureUniformParameters(
 		{
 			SceneTextureParameters.GBufferVelocityTexture = SceneTextures->Velocity;
 		}
+
+		// Begin TopRP changes Add Toon Buffer 7. Bind Toon Buffer Textures
+		if (EnumHasAnyFlags(SetupMode, ESceneTextureSetupMode::TBufferA) && HasBeenProduced(SceneTextures->TBufferA))
+		{
+			SceneTextureParameters.TBufferATexture = SceneTextures->TBufferA;
+		}
+
+		if (EnumHasAnyFlags(SetupMode, ESceneTextureSetupMode::TBufferB) && HasBeenProduced(SceneTextures->TBufferB))
+		{
+			SceneTextureParameters.TBufferBTexture = SceneTextures->TBufferB;
+		}
+
+		if (EnumHasAnyFlags(SetupMode, ESceneTextureSetupMode::TBufferC) && HasBeenProduced(SceneTextures->TBufferC))
+		{
+			SceneTextureParameters.TBufferCTexture = SceneTextures->TBufferC;
+		}
+		// End TopRP changes
 
 		if (EnumHasAnyFlags(SetupMode, ESceneTextureSetupMode::SSAO) && HasBeenProduced(SceneTextures->ScreenSpaceAO))
 		{

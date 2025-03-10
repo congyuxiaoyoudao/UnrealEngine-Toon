@@ -40,8 +40,14 @@ enum class ESceneTextureSetupMode : uint32
 	GBufferF		= 1 << 8,
 	SSAO			= 1 << 9,
 	CustomDepth		= 1 << 10,
+	// Begin TopRP changes Add Toon Buffer 9. Add Toon Buffer to setup mode
+	TBufferA		= 1 << 11,
+	TBufferB		= 1 << 12,
+	TBufferC		= 1 << 13,
 	GBuffers		= GBufferA | GBufferB | GBufferC | GBufferD | GBufferE | GBufferF,
-	All				= SceneColor | SceneDepth | SceneVelocity | GBuffers | SSAO | CustomDepth
+	TBuffers		= TBufferA | TBufferB | TBufferC,
+	All				= SceneColor | SceneDepth | SceneVelocity | GBuffers | SSAO | CustomDepth | TBuffers
+	// End TopRP changes
 };
 ENUM_CLASS_FLAGS(ESceneTextureSetupMode);
 

@@ -158,8 +158,20 @@ FToonMeshPassParameters* GetToonPassParameters(FRDGBuilder& GraphBuilder, const 
     PassParameters->View = View.ViewUniformBuffer;
 
 	// Set Render Target
-    PassParameters->RenderTargets[0] = FRenderTargetBinding(SceneTextures.Color.Target, ERenderTargetLoadAction::ELoad);
-
+    //PassParameters->RenderTargets[0] = FRenderTargetBinding(SceneTextures.Color.Target, ERenderTargetLoadAction::ELoad);
+	if (!HasBeenProduced(SceneTextures.TBufferA))
+	{
+		const FSceneTexturesConfig& Config = View.GetSceneTexturesConfig();
+		SceneTextures.TBufferA = CreateToonBufferTexture(GraphBuilder, Config.Extent, GFastVRamConfig.TBufferA);
+		SceneTextures.TBufferB = CreateToonBufferTexture(GraphBuilder, Config.Extent, GFastVRamConfig.TBufferB);
+		SceneTextures.TBufferC = CreateToonBufferTexture(GraphBuilder, Config.Extent, GFastVRamConfig.TBufferC);
+	}
+	//PassParameters->RenderTargets[0] = FRenderTargetBinding(SceneTextures.Color.Target, ERenderTargetLoadAction::ELoad);
+	PassParameters->RenderTargets[0] = FRenderTargetBinding(SceneTextures.TBufferA, ERenderTargetLoadAction::EClear);
+	PassParameters->RenderTargets[1] = FRenderTargetBinding(SceneTextures.TBufferB, ERenderTargetLoadAction::EClear);
+	PassParameters->RenderTargets[2] = FRenderTargetBinding(SceneTextures.TBufferC, ERenderTargetLoadAction::EClear);
+	PassParameters->RenderTargets.DepthStencil = FDepthStencilBinding(SceneTextures.Depth.Target, ERenderTargetLoadAction::ELoad, ERenderTargetLoadAction::ELoad, FExclusiveDepthStencil::DepthWrite_StencilWrite);
+	
     return PassParameters;
 }
 
@@ -194,3 +206,20 @@ void FDeferredShadingSceneRenderer::RenderToonPass(FRDGBuilder& GraphBuilder, FS
         }
     }
 }
+
+// Begin TopRP changes Add Toon Buffer 2. Declare and implement toon buffer getter and creator
+FRDGTextureDesc GetToonBufferTextureDesc(FIntPoint Extent, ETextureCreateFlags CreateFlags)
+{
+	//Extent：贴图尺寸；PF_B8G8R8A8：贴图格式，表示RGBA各个通道均为8bit
+	//FClearValueBinding::Black:清除值，表示清除贴图时将其清除为黑色
+	//TexCreate_UAV：Unordered Access View，允许在着色器中进行随机读写操作
+	//TexCreate_RenderTargetable：表示纹理可作为渲染目标使用
+	//TexCreate_ShaderResource：表示纹理可作为着色器资源，可以在着色器中进行采样等操作
+	return FRDGTextureDesc(FRDGTextureDesc::Create2D(Extent, PF_B8G8R8A8, FClearValueBinding::Black, TexCreate_UAV | TexCreate_RenderTargetable | TexCreate_ShaderResource | CreateFlags));
+}
+
+FRDGTextureRef CreateToonBufferTexture(FRDGBuilder& GraphBuilder, FIntPoint Extent, ETextureCreateFlags CreateFlags)
+{	
+	return GraphBuilder.CreateTexture(GetToonBufferTextureDesc(Extent, CreateFlags), TEXT("TBufferA"));
+}
+// End TopRP changes

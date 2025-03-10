@@ -5,6 +5,11 @@
 
 #include "MeshMaterialShader.h"
 
+// Begin TopRP changes Add Toon Buffer 2. Declare and implement toon buffer getter and creator
+FRDGTextureDesc GetToonBufferTextureDesc(FIntPoint Extent, ETextureCreateFlags CreateFlags);
+FRDGTextureRef CreateToonBufferTexture(FRDGBuilder& GraphBuilder, FIntPoint Extent, ETextureCreateFlags CreateFlags);
+// End TopRP changes
+
 class FToonMeshPassProcessor : public FMeshPassProcessor
 {
 public:

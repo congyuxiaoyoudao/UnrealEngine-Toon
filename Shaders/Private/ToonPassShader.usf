@@ -37,8 +37,15 @@ void MainVS(
 
 void MainPS(
 	FSimpleMeshPassVSToPS In,
-	out float4 OutColor : SV_Target0)
+	out float4 OutColor1 : SV_Target0,
+	out float4 OutColor2 : SV_Target1,
+	out float4 OutColor3 : SV_Target2)
 {
-	float3 Color = float3(1.0, 0.0, 0.0);
-	OutColor = float4(Color, 1.0);
+	float3 Color1 = float3(1.0, 0.0, 0.0);
+	float3 Color2 = float3(0.0, 1.0, 0.0);
+	float3 Color3 = float3(0.0, 0.0, 1.0);
+	
+	OutColor1 = float4(Color1, 1.0);
+	OutColor2 = float4(Color2, 1.0);
+	OutColor3 = float4(Color3, 1.0);
 }

@@ -135,6 +135,13 @@ struct FSceneTextures : public FMinimalSceneTextures
 	FRDGTextureRef GBufferE{};
 	FRDGTextureRef GBufferF{};
 
+	// Begin TopRP changes Add Toon Buffer 3. Add Toon Buffer textures
+	// Textures containing toon buffer information for toon shading.
+	FRDGTextureRef TBufferA{};
+	FRDGTextureRef TBufferB{};
+	FRDGTextureRef TBufferC{};
+	// End TopRP changes
+	
 	// Additional Buffer texture used by mobile
 	FRDGTextureMSAA DepthAux{};
 

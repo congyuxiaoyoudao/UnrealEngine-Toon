@@ -26,6 +26,12 @@ BEGIN_GLOBAL_SHADER_PARAMETER_STRUCT(FSceneTextureUniformParameters, ENGINE_API)
 	SHADER_PARAMETER_RDG_TEXTURE(Texture2D, GBufferFTexture)
 	SHADER_PARAMETER_RDG_TEXTURE(Texture2D, GBufferVelocityTexture)
 
+	// Begin TopRP changes Add Toon Buffer 1. Define toon buffer textures
+	SHADER_PARAMETER_RDG_TEXTURE(Texture2D, TBufferATexture)
+	SHADER_PARAMETER_RDG_TEXTURE(Texture2D, TBufferBTexture)
+	SHADER_PARAMETER_RDG_TEXTURE(Texture2D, TBufferCTexture)
+	// End TopRP changes
+
 	// SSAO
 	SHADER_PARAMETER_RDG_TEXTURE(Texture2D, ScreenSpaceAOTexture)
 

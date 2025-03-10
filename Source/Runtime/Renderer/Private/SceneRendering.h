@@ -2825,6 +2825,11 @@ struct FFastVramConfig
 	ETextureCreateFlags GBufferE;
 	ETextureCreateFlags GBufferF;
 	ETextureCreateFlags GBufferVelocity;
+	// Begin TopRP changes Add Toon Buffer 8. Add texture create flag
+	ETextureCreateFlags TBufferA;
+	ETextureCreateFlags TBufferB;
+	ETextureCreateFlags TBufferC;
+	// End TopRP changes
 	ETextureCreateFlags HZB;
 	ETextureCreateFlags SceneDepth;
 	ETextureCreateFlags SceneColor;
