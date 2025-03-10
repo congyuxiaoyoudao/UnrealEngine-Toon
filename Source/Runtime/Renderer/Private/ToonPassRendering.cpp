@@ -55,7 +55,7 @@ void FToonMeshPassProcessor::AddMeshBatch(
 					*MaterialRenderProxy,
 					*Material,
 					FM_Solid,
-					CM_CCW); // Cull Front
+					CM_CW); // Cull Front
 			}
 		}
 	}
@@ -73,7 +73,7 @@ bool FToonMeshPassProcessor::Process(
 {
 	const FVertexFactory* VertexFactory = MeshBatch.VertexFactory;
 
-	TMeshProcessorShaders<FToonPassVS, FToonPassVS> ToonPassShader;
+	TMeshProcessorShaders<FToonPassVS, FToonPassPS> ToonPassShader;
 	{
 		FMaterialShaderTypes ShaderTypes;
 		// 指定使用的shader
@@ -189,7 +189,7 @@ void FDeferredShadingSceneRenderer::RenderToonPass(FRDGBuilder& GraphBuilder, FS
 				ERDGPassFlags::Raster | ERDGPassFlags::SkipRenderPass,
 				[&View, PassParameters](FRDGDispatchPassBuilder& DispatchPassBuilder)
 			{		
-				View.ParallelMeshDrawCommandPasses[EMeshPass::ToonOutlinePass].Dispatch(DispatchPassBuilder, &PassParameters->InstanceCullingDrawParams);
+				View.ParallelMeshDrawCommandPasses[EMeshPass::ToonPass].Dispatch(DispatchPassBuilder, &PassParameters->InstanceCullingDrawParams);
 			});
         }
     }
