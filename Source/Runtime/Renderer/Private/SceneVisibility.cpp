@@ -1634,6 +1634,7 @@ void FRelevancePacket::ComputeRelevance(FDynamicPrimitiveIndexList& DynamicPrimi
 									DrawCommandPacket.AddCommandsForMesh(PrimitiveIndex, PrimitiveSceneInfo, StaticMeshRelevance, StaticMesh, CullingPayloadFlags, Scene, bCanCache, EMeshPass::BasePass);
 									// Begin TopRP changes
 									DrawCommandPacket.AddCommandsForMesh(PrimitiveIndex, PrimitiveSceneInfo, StaticMeshRelevance, StaticMesh, CullingPayloadFlags, Scene, bCanCache, EMeshPass::ToonOutlinePass);
+									DrawCommandPacket.AddCommandsForMesh(PrimitiveIndex, PrimitiveSceneInfo, StaticMeshRelevance, StaticMesh, CullingPayloadFlags, Scene, bCanCache, EMeshPass::ToonPass);
 									// End TopRP changes
 									MarkMask |= EMarkMaskBits::StaticMeshVisibilityMapMask;
 
@@ -2301,6 +2302,9 @@ static void ComputeDynamicMeshRelevance(
 			// Begin TopRP changes
 			PassMask.Set(EMeshPass::ToonOutlinePass);
 			View.NumVisibleDynamicMeshElements[EMeshPass::ToonOutlinePass] += NumElements;
+			
+			PassMask.Set(EMeshPass::ToonPass);
+			View.NumVisibleDynamicMeshElements[EMeshPass::ToonPass] += NumElements;
 			// End TopRP changes
 			
 			if (ViewRelevance.bUsesSkyMaterial)

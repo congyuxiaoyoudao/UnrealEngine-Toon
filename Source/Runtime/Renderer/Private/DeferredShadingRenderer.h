@@ -644,6 +644,10 @@ private:
 	void RenderToonOutlinePass(
 		FRDGBuilder& GraphBuilder,
 		FSceneTextures& SceneTextures);
+
+	void RenderToonPass(
+		FRDGBuilder& GraphBuilder,
+		FSceneTextures& SceneTextures);
 	// End TopRP changes
 	
 	void RenderFog(

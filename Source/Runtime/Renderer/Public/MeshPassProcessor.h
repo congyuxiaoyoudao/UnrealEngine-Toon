@@ -73,6 +73,7 @@ namespace EMeshPass
 		WaterInfoTexturePass,
 		// Begin TopRP changes : Add custom pass 1. Add to enum
 		ToonOutlinePass,
+		ToonPass, // Used for write toon buffers
 		// End TopRP changes
 
 #if WITH_EDITOR
@@ -133,6 +134,7 @@ inline const TCHAR* GetMeshPassName(EMeshPass::Type MeshPass)
 	case EMeshPass::WaterInfoTexturePass: return TEXT("WaterInfoTexturePass");
 	// Begin TopRP changes : Add custom pass 2. Set mesh pass name
 	case EMeshPass::ToonOutlinePass: return TEXT("ToonOutlinePass");
+	case EMeshPass::ToonPass: return TEXT("ToonPass");
 	// End TopRP changes
 #if WITH_EDITOR
 	case EMeshPass::HitProxy: return TEXT("HitProxy");
@@ -143,10 +145,10 @@ inline const TCHAR* GetMeshPassName(EMeshPass::Type MeshPass)
 	}
 
 #if WITH_EDITOR
-	// Begin TopRP changes : Add custom pass 3. Update assert condition 38 -> 39
-	static_assert(EMeshPass::Num == 39 + 4, "Need to update switch(MeshPass) after changing EMeshPass"); // GUID to prevent incorrect auto-resolves, please change when changing the expression: {674D7D62-CFD8-4971-9A8D-CD91E5612CD8}
+	// Begin TopRP changes : Add custom pass 3. Update assert condition 38 -> 39 39 -> 40
+	static_assert(EMeshPass::Num == 40 + 4, "Need to update switch(MeshPass) after changing EMeshPass"); // GUID to prevent incorrect auto-resolves, please change when changing the expression: {674D7D62-CFD8-4971-9A8D-CD91E5612CD8}
 #else
-	static_assert(EMeshPass::Num == 39, "Need to update switch(MeshPass) after changing EMeshPass"); // GUID to prevent incorrect auto-resolves, please change when changing the expression: {674D7D62-CFD8-4971-9A8D-CD91E5612CD8}
+	static_assert(EMeshPass::Num == 40, "Need to update switch(MeshPass) after changing EMeshPass"); // GUID to prevent incorrect auto-resolves, please change when changing the expression: {674D7D62-CFD8-4971-9A8D-CD91E5612CD8}
 	// End TopRP changes
 #endif
 

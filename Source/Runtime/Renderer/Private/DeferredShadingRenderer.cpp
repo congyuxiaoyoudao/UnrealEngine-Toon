@@ -2530,6 +2530,12 @@ void FDeferredShadingSceneRenderer::Render(FRDGBuilder& GraphBuilder)
 			}
 
 			// VisualizeVirtualShadowMap TODO
+
+			// Begin TopRP changes Add Toon Pass after Base Pass 
+			{
+				RenderToonPass(GraphBuilder,SceneTextures);
+			}
+			// End TopRP changes
 		}
 
 
